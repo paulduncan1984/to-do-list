@@ -31,33 +31,60 @@ function Button({ children }) {
 export default function App() {
 	const [toDoList, setToDoList] = useState(initialList);
 
+	function handleComplete(id) {
+		console.log(id);
+		setToDoList((toDoList) =>
+			toDoList.map((item) =>
+				item.id === toDoList.id ? { ...toDoList, status: !item.status } : item
+			)
+		);
+	}
+
+	// function handleToggleItem(id) {
+	// 	setItems((items) =>
+	// 		items.map((item) =>
+	// 			item.id === id ? { ...item, packed: !item.packed } : item
+	// 		)
+	// 	);
+	// }
+
 	return (
 		<div>
 			<h1>To do list</h1>
-			<List toDoList={toDoList} />
+			<List toDoList={toDoList} onComplete={handleComplete} />
 		</div>
 	);
 }
 
-function List({ toDoList }) {
+function List({ toDoList, onComplete }) {
+	// const [isActive, setIsActive] = useState(item);
+
+	// function handleComplete() {
+	// 	console.log("Checked");
+	// 	setIsActive((item) => !item.status);
+	// }
+
 	return (
 		<div>
 			<ul>
-				{toDoList.map((item) =>
-					item.status ? <ListItem item={item} /> : null
-				)}
+				{toDoList.map((item) => (
+					<ListItem item={item} onComplete={onComplete} />
+				))}
 			</ul>
 			<Button>Add item</Button>
 		</div>
 	);
 }
 
-function ListItem({ item }) {
-	// const [isActive, setIsActive] = useState(item);
+function ListItem({ item, onComplete }) {
 	return (
 		<div>
-			<li>
-				<input type="checkbox" />
+			<li className={!item.status ? "selected" : ""}>
+				<input
+					type="checkbox"
+					onChange={() => onComplete(item.id)}
+					checked={item.status ? "" : "checked"}
+				/>
 				<h2>{item.title}</h2>
 				<p>{item.description}</p>
 				<p>{item.due}</p>
