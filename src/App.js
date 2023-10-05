@@ -35,11 +35,32 @@ export default function App() {
 		);
 	}
 
+	function handleDelete(id) {
+		console.log(id);
+	}
+
+	function handleAddItem(item) {
+		setToDoList((items) => [...toDoList, item]);
+		// Create a toggle for the add item form and call that here, setting it to false
+	}
+
 	return (
-		<div>
-			<h1>To do list</h1>
-			<List toDoList={toDoList} onComplete={handleComplete} />
-		</div>
+		<>
+			{toDoList.length === 0 ? (
+				"Use the form to add items to your to-do list"
+			) : (
+				<div>
+					<h1>To do list</h1>
+					<List
+						toDoList={toDoList}
+						onComplete={handleComplete}
+						onDelete={handleDelete}
+						onAddItem={handleAddItem}
+					/>
+				</div>
+			)}
+			<Button>Show Add item form</Button>
+		</>
 	);
 }
 
@@ -47,20 +68,25 @@ function Button({ children }) {
 	return <button>{children}</button>;
 }
 
-function List({ toDoList, onComplete }) {
+function List({ toDoList, onComplete, onDelete, onAddItem }) {
 	return (
 		<div>
 			<ul>
 				{toDoList.map((item) => (
-					<ListItem item={item} onComplete={onComplete} key={item.id} />
+					<ListItem
+						item={item}
+						onComplete={onComplete}
+						key={item.id}
+						onDelete={onDelete}
+					/>
 				))}
 			</ul>
-			<Button>Add item</Button>
+			<AddItem onAddItem={onAddItem} />
 		</div>
 	);
 }
 
-function ListItem({ item, onComplete }) {
+function ListItem({ item, onComplete, onDelete }) {
 	return (
 		<div>
 			<li className={!item.status ? "selected" : ""}>
@@ -72,8 +98,74 @@ function ListItem({ item, onComplete }) {
 				<h2>{item.title}</h2>
 				<p>{item.description}</p>
 				<p>{item.due}</p>
-				<button>x</button>
+				<button onClick={() => onDelete(item.id)}>x</button>
 			</li>
 		</div>
+	);
+}
+
+function AddItem({ onAddItem }) {
+	// create a function where by onSubmit creates a new object stored in const variable named newItem
+	// pull in a function from props (contained in App) that adds this to the initalFriends array, or rather, the toDoList array
+	const [title, setTitle] = useState("");
+	const [description, setDescription] = useState("");
+	const [dueDate, setDueDate] = useState("");
+
+	// const today = new Date();
+	// const month = today.getMonth() + 1;
+	// const year = today.getFullYear();
+	// const date = today.getDate();
+	// const currentDate = month + "/" + date + "/" + year;
+
+	// const [dueDate, setDueDate] = useState(currentDate);
+
+	function handleSubmit(e) {
+		e.preventDefault();
+		console.log(e);
+		if (!title || !description || !dueDate) return;
+
+		const id = crypto.randomUUID();
+		const newItem = {
+			id,
+			title,
+			description,
+			dueDate,
+			status: true,
+		};
+		console.log(newItem);
+
+		// Passes new item object to toDoList array
+		onAddItem(newItem);
+
+		// Resets fields
+		setTitle("");
+		setDescription("");
+		setDueDate("");
+	}
+
+	return (
+		<form onSubmit={handleSubmit}>
+			<label>Title</label>
+			<input
+				type="text"
+				value={title}
+				placeholder="Insert title here"
+				onChange={(e) => setTitle(e.target.value)}
+			/>
+			<label>Description</label>
+			<input
+				type="text"
+				value={description}
+				placeholder="Insert description here"
+				onChange={(e) => setDescription(e.target.value)}
+			/>
+			<label>Due date</label>
+			<input
+				type="date"
+				value={dueDate}
+				onChange={(e) => setDueDate(e.target.value)}
+			/>
+			<Button>Add item</Button>
+		</form>
 	);
 }
