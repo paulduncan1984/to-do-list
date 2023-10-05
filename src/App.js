@@ -16,7 +16,7 @@ const initialList = [
 		status: true,
 	},
 	{
-		id: 1,
+		id: 3,
 		title: "Clean car",
 		description: "Inside and out",
 		due: "11/11/2023",
@@ -24,29 +24,16 @@ const initialList = [
 	},
 ];
 
-function Button({ children }) {
-	return <button>{children}</button>;
-}
-
 export default function App() {
 	const [toDoList, setToDoList] = useState(initialList);
 
 	function handleComplete(id) {
-		console.log(id);
 		setToDoList((toDoList) =>
 			toDoList.map((item) =>
-				item.id === toDoList.id ? { ...toDoList, status: !item.status } : item
+				item.id === id ? { ...item, status: !item.status } : item
 			)
 		);
 	}
-
-	// function handleToggleItem(id) {
-	// 	setItems((items) =>
-	// 		items.map((item) =>
-	// 			item.id === id ? { ...item, packed: !item.packed } : item
-	// 		)
-	// 	);
-	// }
 
 	return (
 		<div>
@@ -56,19 +43,16 @@ export default function App() {
 	);
 }
 
+function Button({ children }) {
+	return <button>{children}</button>;
+}
+
 function List({ toDoList, onComplete }) {
-	// const [isActive, setIsActive] = useState(item);
-
-	// function handleComplete() {
-	// 	console.log("Checked");
-	// 	setIsActive((item) => !item.status);
-	// }
-
 	return (
 		<div>
 			<ul>
 				{toDoList.map((item) => (
-					<ListItem item={item} onComplete={onComplete} />
+					<ListItem item={item} onComplete={onComplete} key={item.id} />
 				))}
 			</ul>
 			<Button>Add item</Button>
@@ -77,13 +61,9 @@ function List({ toDoList, onComplete }) {
 }
 
 function ListItem({ item, onComplete }) {
-	// TURN THE 'CHECKED ATTRIBUTE INTO A FUNCTION USING STATE
-	function checked() {
-		return !item.status ? "selected" : "";
-	}
 	return (
 		<div>
-			<li className={checked()}>
+			<li className={!item.status ? "selected" : ""}>
 				<input
 					type="checkbox"
 					onChange={() => onComplete(item.id)}
