@@ -77,9 +77,13 @@ function List({ toDoList, onComplete }) {
 }
 
 function ListItem({ item, onComplete }) {
+	// TURN THE 'CHECKED ATTRIBUTE INTO A FUNCTION USING STATE
+	function checked() {
+		return !item.status ? "selected" : "";
+	}
 	return (
 		<div>
-			<li className={!item.status ? "selected" : ""}>
+			<li className={checked()}>
 				<input
 					type="checkbox"
 					onChange={() => onComplete(item.id)}
