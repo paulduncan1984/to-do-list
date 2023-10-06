@@ -1,3 +1,10 @@
+// 1. Hide the functionality to show form button
+// 2. Add the hide form functionality to same button
+// 3. Hide form on form completion
+// 4. Add delete item functionality
+// 5. Sperate components into their own files
+// 6. Style components
+
 import { useState } from "react";
 
 const initialList = [
@@ -26,6 +33,7 @@ const initialList = [
 
 export default function App() {
 	const [toDoList, setToDoList] = useState(initialList);
+	const [showAddItemForm, setShowAddItemForm] = useState(true);
 
 	function handleComplete(id) {
 		setToDoList((toDoList) =>
@@ -42,6 +50,12 @@ export default function App() {
 	function handleAddItem(item) {
 		setToDoList((items) => [...toDoList, item]);
 		// Create a toggle for the add item form and call that here, setting it to false
+		setShowAddItemForm(!showAddItemForm);
+	}
+
+	function handleShowForm() {
+		console.log("clicked");
+		setShowAddItemForm(() => !showAddItemForm);
 	}
 
 	return (
@@ -55,20 +69,37 @@ export default function App() {
 						toDoList={toDoList}
 						onComplete={handleComplete}
 						onDelete={handleDelete}
-						onAddItem={handleAddItem}
 					/>
 				</div>
 			)}
-			<Button>Show Add item form</Button>
+			<>
+				{!showAddItemForm ? (
+					<Button onClick={handleShowForm}>Show Add item form</Button>
+				) : (
+					""
+				)}
+			</>
+
+			<>
+				{showAddItemForm ? (
+					<AddItem
+						onAddItem={handleAddItem}
+						formToggle={showAddItemForm}
+						setformToggle={setShowAddItemForm}
+					/>
+				) : (
+					""
+				)}
+			</>
 		</>
 	);
 }
 
-function Button({ children }) {
-	return <button>{children}</button>;
+function Button({ children, onClick }) {
+	return <button onClick={onClick}>{children}</button>;
 }
 
-function List({ toDoList, onComplete, onDelete, onAddItem }) {
+function List({ toDoList, onComplete, onDelete }) {
 	return (
 		<div>
 			<ul>
@@ -81,7 +112,6 @@ function List({ toDoList, onComplete, onDelete, onAddItem }) {
 					/>
 				))}
 			</ul>
-			<AddItem onAddItem={onAddItem} />
 		</div>
 	);
 }
@@ -109,7 +139,7 @@ function AddItem({ onAddItem }) {
 	// pull in a function from props (contained in App) that adds this to the initalFriends array, or rather, the toDoList array
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
-	const [dueDate, setDueDate] = useState("");
+	const [due, setDue] = useState("");
 
 	// const today = new Date();
 	// const month = today.getMonth() + 1;
@@ -122,17 +152,18 @@ function AddItem({ onAddItem }) {
 	function handleSubmit(e) {
 		e.preventDefault();
 		console.log(e);
-		if (!title || !description || !dueDate) return;
+		if (!title || !description || !due) return;
 
 		const id = crypto.randomUUID();
 		const newItem = {
 			id,
 			title,
 			description,
-			dueDate,
+			due,
 			status: true,
 		};
-		console.log(newItem);
+
+		console.log(newItem.due);
 
 		// Passes new item object to toDoList array
 		onAddItem(newItem);
@@ -140,7 +171,7 @@ function AddItem({ onAddItem }) {
 		// Resets fields
 		setTitle("");
 		setDescription("");
-		setDueDate("");
+		setDue("");
 	}
 
 	return (
@@ -160,11 +191,7 @@ function AddItem({ onAddItem }) {
 				onChange={(e) => setDescription(e.target.value)}
 			/>
 			<label>Due date</label>
-			<input
-				type="date"
-				value={dueDate}
-				onChange={(e) => setDueDate(e.target.value)}
-			/>
+			<input type="date" value={due} onChange={(e) => setDue(e.target.value)} />
 			<Button>Add item</Button>
 		</form>
 	);
