@@ -1,7 +1,7 @@
-// 1. Hide the functionality to show form button
-// 2. Add the hide form functionality to same button
-// 3. Hide form on form completion
-// 4. Add delete item functionality
+// 1. Hide the functionality to show form button - DONE
+// 2. Add the hide form functionality to same button - Not required
+// 3. Hide form on form completion - Done
+// 4. Add delete item functionality - Done
 // 5. Sperate components into their own files
 // 6. Style components
 
@@ -33,7 +33,7 @@ const initialList = [
 
 export default function App() {
 	const [toDoList, setToDoList] = useState(initialList);
-	const [showAddItemForm, setShowAddItemForm] = useState(true);
+	const [showAddItemForm, setShowAddItemForm] = useState(false);
 
 	function handleComplete(id) {
 		setToDoList((toDoList) =>
@@ -45,6 +45,8 @@ export default function App() {
 
 	function handleDelete(id) {
 		console.log(id);
+		setToDoList((toDoList) => toDoList.filter((item) => item.id !== id));
+		console.log(toDoList);
 	}
 
 	function handleAddItem(item) {
